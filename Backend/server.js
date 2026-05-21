@@ -16,7 +16,6 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5173",
   "https://blogg-app-six-nu.vercel.app",
-  "https://blogg-app-nnkf.onrender.com"
 ].filter(Boolean);
 
 app.use(cors({
