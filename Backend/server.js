@@ -17,7 +17,7 @@ app.use(cookieParser())
 app.use(cors({
   origin: [
   "http://localhost:5173",
-  'https://blogg-app-six-nu.vercel.app/'
+  'https://blogg-app-six-nu.vercel.app'
   ],// Allow only your frontend
   credentials: true                // This is the key part you are missing!
 }));
