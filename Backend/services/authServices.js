@@ -44,13 +44,23 @@ export const login = async ({email,password})=>{
         throw err;
     }
 
-    //generete token
-    const token=jwt.sign({userId:user._id,role:user.role.toUpperCase(),email:user.email},process.env.JWT_SECRET,{
-        expiresIn:"7d",
-    });
+    if (!process.env.JWT_SECRET) {
+        const err = new Error("JWT_SECRET is not configured");
+        err.status = 500;
+        throw err;
+    }
+
+    //generate token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role.toUpperCase(), email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     const userObj = user.toObject();
     delete userObj.password;
 
-    return {token,user:userObj};
+    return { token, user: userObj };
 };

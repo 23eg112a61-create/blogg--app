@@ -12,15 +12,23 @@ config()//process .env
 const app=exp()
 
 //add body parser middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+  "https://blogg-app-six-nu.vercel.app",
+  "https://blogg-app-nnkf.onrender.com"
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://blogg-app-six-nu.vercel.app"
-  ],
+  origin: allowedOrigins,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+app.use(exp.json());
+app.use(exp.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // connect routes
 app.use("/user-api", userRoute)
@@ -31,10 +39,14 @@ app.use("/common-api",commonRoute)
 //connect to the database
 const connectDB = async () => {
     try {
-        // 1. Check if DB_URL exists
+        // 1. Check required env vars
         if (!process.env.DB_URL) {
             console.error("❌ DB_URL is missing in .env file");
-            process.exit(1); 
+            process.exit(1);
+        }
+        if (!process.env.JWT_SECRET) {
+            console.error("❌ JWT_SECRET is missing in environment variables");
+            process.exit(1);
         }
 
         await connect(process.env.DB_URL);
@@ -46,10 +58,9 @@ const connectDB = async () => {
             console.log(`🚀 Server is running on http://localhost:${PORT}`);
         });
 
-    } catch (error) { // <--- Added 'error' variable name here
-        console.error("❌ ERROR during startup:", error.message);
-        // If DB fails, the process ends so you know why
-        process.exit(1); 
+    } catch (error) {
+        console.error("❌ ERROR during startup:", error);
+        process.exit(1);
     }
 };
 
